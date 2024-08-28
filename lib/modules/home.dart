@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
@@ -46,10 +46,20 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Expanded(
               child: ListView.builder(
-                  itemCount: 4,
+                  itemCount: 6,
                   itemBuilder: (context, i) {
                     // return Text('data#${i + 1}');
-                    return NoteCard(note: Note(id: i, title: "Note#$i+1"));
+                    if (i != 0) {
+                      return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 4),
+                          child:
+                              NoteCard(note: Note(id: i, title: "Note#${i}")));
+                    } else {
+                      return SizedBox(
+                        height: 4,
+                      );
+                    }
                   }),
             )
           ],
