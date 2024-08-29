@@ -47,16 +47,20 @@ class _HomeState extends State<Home> {
             Expanded(
               child: ListView.builder(
                   itemCount: 6,
+                  shrinkWrap: true,
                   itemBuilder: (context, i) {
                     // return Text('data#${i + 1}');
                     if (i != 0) {
                       return Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 4, horizontal: 4),
-                          child:
-                              NoteCard(note: Note(id: i, title: "Note#${i}")));
+                          child: NoteCard(
+                              note: Note(
+                            id: i,
+                            title: "Note#$i",
+                          )));
                     } else {
-                      return SizedBox(
+                      return const SizedBox(
                         height: 4,
                       );
                     }
