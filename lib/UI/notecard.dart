@@ -1,7 +1,5 @@
 // ignore_for_file: file_names
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutterpad/models/note.dart';
 import 'package:flutterpad/styles/styles.dart';
@@ -19,9 +17,7 @@ class _NoteCardState extends State<NoteCard> {
   Widget build(BuildContext context) {
     return Container(
         margin: const EdgeInsets.all(2),
-        // height: 120,
         constraints: const BoxConstraints(minHeight: 120),
-        // height: 120,
         decoration: BoxDecoration(
           color: ColorDict.noteCardColor,
           borderRadius: BorderRadius.circular(16),
@@ -106,68 +102,29 @@ class _NoteCardState extends State<NoteCard> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             runSpacing: 8,
                             spacing: 6,
-                            children: [
-                              Chip(
-                                label: const Text(
-                                  "Work",
-                                  style: TextStyle(
-                                      fontSize:
-                                          10), // Adjust font size as needed
-                                ),
-                                backgroundColor: const Color(0xFFE1D7C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(
-                                    color: const Color(0xFFCDC2A5),
-                                  ),
-                                ),
-                              ),
-                              Chip(
-                                label: const Text(
-                                  "Project stuff",
-                                  style: TextStyle(
-                                      fontSize:
-                                          10), // Adjust font size as needed
-                                ),
-                                backgroundColor: const Color(0xFFE1D7C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(
-                                    color: const Color(0xFFCDC2A5),
-                                  ),
-                                ),
-                              ),
-                              Chip(
-                                label: const Text(
-                                  "Project stuff",
-                                  style: TextStyle(
-                                      fontSize:
-                                          10), // Adjust font size as needed
-                                ),
-                                backgroundColor: const Color(0xFFE1D7C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(
-                                    color: const Color(0xFFCDC2A5),
-                                  ),
-                                ),
-                              ),
-                              Chip(
-                                label: const Text(
-                                  "+5",
-                                  style: TextStyle(
-                                      fontSize:
-                                          10), // Adjust font size as needed
-                                ),
-                                backgroundColor: const Color(0xFFE1D7C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  side: BorderSide(
-                                    color: const Color(0xFFCDC2A5),
-                                  ),
-                                ),
-                              )
-                            ],
+                            children: () {
+                              final List<TextButton> tagBtns = [];
+                              for (var tag in widget.note.getTags()) {
+                                tagBtns.add(TextButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: ColorDict.bgColor,
+                                        shape: RoundedRectangleBorder(
+                                            side: const BorderSide(
+                                                color:
+                                                    ColorDict.noteCardborder),
+                                            borderRadius:
+                                                BorderRadius.circular(20))),
+                                    child: Text(
+                                      tag.name,
+                                      style: const TextStyle(
+                                          color: ColorDict.noteCardColor,
+                                          fontSize: 10),
+                                    )));
+                              }
+
+                              return tagBtns;
+                            }(),
                           ),
                         ),
                       ],

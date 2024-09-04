@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutterpad/models/note.dart';
-import 'package:flutterpad/modules/notecard.dart';
+import 'package:flutterpad/UI/notecard.dart';
+import 'package:flutterpad/services/userdataprovider.dart';
 import 'package:flutterpad/styles/styles.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.title});
@@ -13,6 +15,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    context.read<UserDataProvider>().fetchUserDetails();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,28 +52,32 @@ class _HomeState extends State<Home> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 6,
-                  shrinkWrap: true,
-                  itemBuilder: (context, i) {
-                    // return Text('data#${i + 1}');
-                    if (i != 0) {
-                      return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 4, horizontal: 4),
-                          child: NoteCard(
-                              note: Note(
-                            id: i,
-                            title: "Note#$i",
-                          )));
-                    } else {
-                      return const SizedBox(
-                        height: 4,
-                      );
-                    }
-                  }),
-            )
+            Expanded(child: Consumer<UserDataProvider>(
+              builder: (context, userdataProvider, child) {
+                if (userdataProvider.userData == null) {
+                  return const CircularProgressIndicator();
+                } else {
+                  return ListView.builder(
+                      itemCount: userdataProvider.userData!.notes.length + 1,
+                      shrinkWrap: true,
+                      itemBuilder: (context, i) {
+                        // return Text('data#${i + 1}');
+                        if (i != 0) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 4),
+                            child: NoteCard(
+                                note: userdataProvider.userData!.notes[i - 1]),
+                          );
+                        } else {
+                          return const SizedBox(
+                            height: 4,
+                          );
+                        }
+                      });
+                }
+              },
+            ))
           ],
         ),
       ),
