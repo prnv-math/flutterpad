@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutterpad/models/note.dart';
-import 'package:flutterpad/UI/notecard.dart';
+import 'package:flutterpad/UI/editor.dart';
+import 'package:flutterpad/UI/widgets/notecard.dart';
 import 'package:flutterpad/services/userdataprovider.dart';
 import 'package:flutterpad/styles/styles.dart';
 import 'package:provider/provider.dart';
@@ -66,8 +66,17 @@ class _HomeState extends State<Home> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 4, horizontal: 4),
-                            child: NoteCard(
-                                note: userdataProvider.userData!.notes[i - 1]),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Editor()));
+                              },
+                              child: NoteCard(
+                                  note:
+                                      userdataProvider.userData!.notes[i - 1]),
+                            ),
                           );
                         } else {
                           return const SizedBox(
