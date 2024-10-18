@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutterpad/UI/editor.dart';
 import 'package:flutterpad/UI/widgets/notecard.dart';
 import 'package:flutterpad/services/userdataprovider.dart';
-import 'package:flutterpad/styles/styles.dart';
+import 'package:flutterpad/utils/dictionary.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.title});
+  Home({super.key});
 
-  final String title;
+  final String title = Constants.appTitle;
 
   @override
   State<Home> createState() => _HomeState();
@@ -17,14 +17,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void initState() {
-    context.read<UserDataProvider>().fetchUserDetails();
+    context.read<UserDataProvider>().fetchUserData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorDict.bgColor,
+      backgroundColor: const Color.fromRGBO(103, 65, 136, 1),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
@@ -71,7 +71,9 @@ class _HomeState extends State<Home> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Editor()));
+                                        builder: (context) => Editor(
+                                            userdataProvider
+                                                .userData!.notes[i - 1])));
                               },
                               child: NoteCard(
                                   note:
