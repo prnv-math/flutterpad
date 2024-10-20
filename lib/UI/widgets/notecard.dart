@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutterpad/models/note.dart';
-import 'package:flutterpad/styles/styles.dart';
+import 'package:flutterpad/utils/dictionary.dart';
 
 class NoteCard extends StatefulWidget {
   final Note note;

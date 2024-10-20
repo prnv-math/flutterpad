@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterpad/services/userdataprovider.dart';
+import 'package:flutterpad/utils/dictionary.dart';
 import 'package:provider/provider.dart';
 
 import 'UI/home.dart';
@@ -19,7 +20,10 @@ class TagPadApp extends StatelessWidget {
         title: 'TagPad',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: const ColorScheme.highContrastLight(
+            background: ColorDict.noteCardColor,
+          ),
+          // colorScheme: ColorScheme.fromSeed(seedColor: ColorDict.bgColor),
           useMaterial3: true,
         ),
         home: Home(),
