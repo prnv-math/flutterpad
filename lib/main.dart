@@ -14,8 +14,12 @@ class TagPadApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserDataProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserDataProvider>(
+          create: (context) => UserDataProvider(),
+        )
+      ],
       child: MaterialApp(
         title: 'TagPad',
         debugShowCheckedModeBanner: false,

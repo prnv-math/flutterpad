@@ -43,6 +43,7 @@ class _EditorState extends State<Editor> {
 
         // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: TextField(
+          textCapitalization: TextCapitalization.sentences,
           controller: _titleEditingController,
           style: const TextStyle(
             fontFamily: 'monospace',
@@ -116,105 +117,74 @@ class _EditorState extends State<Editor> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 12, right: 8, top: 8, bottom: 12),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Wrap(
-            alignment: WrapAlignment.start,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            runSpacing: 8,
-            spacing: 6,
-            children: () {
-              final List<TextButton> tagBtns = [];
-              for (var tag in widget.note.getTags()) {
-                tagBtns.add(TextButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorDict.bgColor,
-                        shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                                color: ColorDict.noteCardborder),
-                            borderRadius: BorderRadius.circular(20))),
-                    child: Text(
-                      tag.name,
-                      style: const TextStyle(
-                          color: ColorDict.noteCardColor, fontSize: 10),
-                    )));
-              }
-
-              return tagBtns;
-            }(),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          Expanded(
-            child: TextField(
-              // clipBehavior: Clip.antiAlias,
-              // scrollController: _textScrollController,
-              // scrollPhysics: ScrollPhysics(),
-              expands: true,
-              controller:
-                  // widget.note.content.isEmpty
-                  //     ? TextEditingController():
-                  _textEditingController,
-              maxLines: null,
-              // ,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration.collapsed(
-                  hintText: "Write here...",
-                  hintStyle: TextStyle(
-                      color: Colors.black45,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16)),
-              style: const TextStyle(
-                fontSize: 19,
-                height: 1.5,
-              ),
-              onChanged: (_) {
-                if (_debounceTimer?.isActive ?? false) {
-                  _debounceTimer!.cancel();
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              alignment: WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              runSpacing: 8,
+              spacing: 6,
+              children: () {
+                final List<TextButton> tagBtns = [];
+                for (var tag in widget.note.getTags()) {
+                  tagBtns.add(TextButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorDict.bgColor,
+                          shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  color: ColorDict.noteCardborder),
+                              borderRadius: BorderRadius.circular(20))),
+                      child: Text(
+                        tag.name,
+                        style: const TextStyle(
+                            color: ColorDict.noteCardColor, fontSize: 10),
+                      )));
                 }
-                _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-                  StorageService.updateNoteText(
-                      widget.note, _textEditingController.text.trim());
-                });
-              },
+
+                return tagBtns;
+              }(),
             ),
-          ),
-          // Expanded(
-          //   child: TextField(
-          //     // clipBehavior: Clip.antiAlias,
-          //     // scrollController: _textScrollController,
-          //     // scrollPhysics: ScrollPhysics(),
-          //     expands: true,
-          //     controller:
-          //         // widget.note.content.isEmpty
-          //         //     ? TextEditingController():
-          //         _textEditingController,
-          //     maxLines: null,
-          //     // ,
-          //     textCapitalization: TextCapitalization.sentences,
-          //     decoration: const InputDecoration.collapsed(
-          //         hintText: "Write here...",
-          //         hintStyle: TextStyle(
-          //             color: Colors.black45,
-          //             fontWeight: FontWeight.normal,
-          //             fontSize: 16)),
-          //     style: const TextStyle(
-          //       fontSize: 19,
-          //       height: 1.5,
-          //     ),
-          //     onChanged: (_) {
-          //       if (_debounceTimer?.isActive ?? false) {
-          //         _debounceTimer!.cancel();
-          //       }
-          //       _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-          //         StorageService.updateNoteText(
-          //             widget.note, _textEditingController.text.trim());
-          //       });
-          //     },
-          //   ),
-          // )
-        ]),
+            SizedBox(
+              height: 24,
+            ),
+            Expanded(
+              child: TextField(
+                // clipBehavior: Clip.antiAlias,
+                // scrollController: _textScrollController,
+                // scrollPhysics: ScrollPhysics(),
+                expands: true,
+                controller:
+                    // widget.note.content.isEmpty
+                    //     ? TextEditingController():
+                    _textEditingController,
+                maxLines: null,
+                // ,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: const InputDecoration.collapsed(
+                    hintText: "Write here...",
+                    hintStyle: TextStyle(
+                        color: Colors.black45,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16)),
+                style: const TextStyle(
+                  fontSize: 19,
+                  height: 1.5,
+                ),
+                onChanged: (_) {
+                  if (_debounceTimer?.isActive ?? false) {
+                    _debounceTimer!.cancel();
+                  }
+                  _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+                    StorageService.updateNoteText(
+                        widget.note, _textEditingController.text.trim());
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

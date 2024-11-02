@@ -7,17 +7,18 @@ abstract class StorageService {
     () {
       final n = Note(id: 01, title: "Guidelines");
       n.addTag(Tag(id: 01, name: "Important"));
-      n.addTag(Tag(id: 01, name: "Favorite"));
+      n.addTag(Tag(id: 02, name: "Favorites"));
 
       return n;
     }(),
     () {
-      final n = Note(id: 01, title: "Tips");
+      final n = Note(id: 02, title: "Tips");
       // n.addTag(Tag(id: 01, name: "Important"));
       return n;
     }()
   ], tags: [
-    Tag(id: 01, name: "Important")
+    Tag(id: 01, name: "Important"),
+    Tag(id: 02, name: "Favorites")
   ]);
   static Future<UserData> getUserData() async {
     return _userData;

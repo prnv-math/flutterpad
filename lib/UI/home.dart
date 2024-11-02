@@ -1,5 +1,9 @@
+// ignore: library_prefixes
+import 'dart:io' as IO;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterpad/UI/editor.dart';
+import 'package:flutterpad/UI/tags.dart';
 import 'package:flutterpad/UI/widgets/notecard.dart';
 import 'package:flutterpad/UI/widgets/tagpadsearchdelegate.dart';
 import 'package:flutterpad/models/note.dart';
@@ -18,6 +22,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Note> filteredNotes = [];
+  final Set<int> _selectedNotes = {};
+  bool _selectionMode = false;
 
   @override
   void initState() {
@@ -39,47 +45,75 @@ class _HomeState extends State<Home> {
               icon: const Icon(Icons.menu));
         }),
         actions: [
-          // SizedBox(
-          //   width: 120,
-          //   child: TextField(
-          //     controller: _searchController,
-          //     decoration: const InputDecoration(
-          //       hintText: 'Search...',
-          //       border: InputBorder.none, // Removes underline
-          //       hintStyle:
-          //           TextStyle(color: ColorDict.bgColor), // Hint text style
-          //     ),
-          //   ),
-          // ),
+          Visibility(
+              visible: _selectionMode,
+              child: Consumer<UserDataProvider>(
+                  builder: (context, userDataProvider, child) {
+                if (userDataProvider.userData == null) {
+                  return const CircularProgressIndicator();
+                } else {
+                  return IconButton(
+                    icon: const Icon(Icons.select_all),
+                    onPressed: () {
+                      late final Set<int> displayedNoteIDs;
+                      if (filteredNotes.isNotEmpty) {
+                        displayedNoteIDs =
+                            filteredNotes.map((n) => n.id).toSet();
+                      } else {
+                        displayedNoteIDs = userDataProvider.userData!.notes
+                            .map((n) => n.id)
+                            .toSet();
+                      }
+                      if (_selectedNotes.containsAll(displayedNoteIDs)) {
+                        setState(() {
+                          _selectedNotes.clear();
+                        });
+                      } else {
+                        _selectedNotes.clear();
+                        setState(() {
+                          _selectedNotes.addAll(displayedNoteIDs);
+                        });
+                      }
+                    },
+                  );
+                }
+              })),
+          Visibility(
+              visible: _selectionMode,
+              child: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {},
+              )),
           Consumer<UserDataProvider>(
             builder: (context, userDataProvider, child) {
               if (userDataProvider.userData == null) {
                 return const IconButton(
                     onPressed: null, icon: Icon(Icons.search_rounded));
-              }
-              if (filteredNotes.isNotEmpty) {
-                return IconButton(
-                    onPressed: () {
-                      setState(() {
-                        filteredNotes.clear();
-                      });
-                    },
-                    icon: const Icon(Icons.close));
               } else {
-                return IconButton(
-                    onPressed: () async {
-                      final res = await showSearch(
-                          context: context,
-                          delegate: TagPadSearchDelegate(
-                              userDataProvider.userData!.notes,
-                              userDataProvider.userData!.tags));
-                      if (res != null && res.isNotEmpty) {
+                if (filteredNotes.isNotEmpty) {
+                  return IconButton(
+                      onPressed: () {
                         setState(() {
-                          filteredNotes = res;
+                          filteredNotes.clear();
                         });
-                      }
-                    },
-                    icon: const Icon(Icons.search_rounded));
+                      },
+                      icon: const Icon(Icons.close));
+                } else {
+                  return IconButton(
+                      onPressed: () async {
+                        final res = await showSearch(
+                            context: context,
+                            delegate: TagPadSearchDelegate(
+                                userDataProvider.userData!.notes,
+                                userDataProvider.userData!.tags));
+                        if (res != null && res.isNotEmpty) {
+                          setState(() {
+                            filteredNotes = res;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.search_rounded));
+                }
               }
             },
           ),
@@ -114,18 +148,54 @@ class _HomeState extends State<Home> {
                       itemBuilder: (context, i) {
                         // return Text('data#${i + 1}');
                         if (i != 0) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 4),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            Editor(displayedNotes[i - 1])));
-                              },
-                              child: NoteCard(note: displayedNotes[i - 1]),
+                          return DecoratedBox(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: _selectedNotes.contains(userdataProvider
+                                        .userData!.notes[i - 1].id)
+                                    ? ColorDict.noteCardColor.withOpacity(0.7)
+                                    : Colors.transparent),
+                            // : ColorDict.noteCardColor.withOpacity(0.7)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 4),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (!_selectionMode) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Editor(displayedNotes[i - 1])));
+                                  } else {
+                                    _toggleSelection(displayedNotes[i - 1].id);
+                                  }
+                                },
+                                onSecondaryTap: () {
+                                  if (!kIsWeb) {
+                                    if (IO.Platform.isWindows) {
+                                      if (!_selectionMode) {
+                                        setState(() {
+                                          _selectionMode = true;
+                                          _selectedNotes
+                                              .add(displayedNotes[i - 1].id);
+                                        });
+                                      } else {
+                                        _toggleSelection(
+                                            displayedNotes[i - 1].id);
+                                      }
+                                    }
+                                  }
+                                },
+                                onLongPress: () {
+                                  setState(() {
+                                    _selectionMode = true;
+                                    _selectedNotes
+                                        .add(displayedNotes[i - 1].id);
+                                  });
+                                },
+                                child: NoteCard(note: displayedNotes[i - 1]),
+                              ),
                             ),
                           );
                         } else {
@@ -166,7 +236,8 @@ class _HomeState extends State<Home> {
                 style: TextStyle(color: ColorDict.noteCardColor),
               ),
               onTap: () {
-                // Handle tap action
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const TagScreen()));
               },
             ),
             const ListTile(
@@ -208,6 +279,17 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _toggleSelection(int noteId) {
+    setState(() {
+      if (_selectedNotes.contains(noteId)) {
+        _selectedNotes.remove(noteId);
+        if (_selectedNotes.isEmpty) _selectionMode = false;
+      } else {
+        _selectedNotes.add(noteId);
+      }
+    });
   }
 
   @override
