@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutterpad/models/note.dart';
 import 'package:flutterpad/models/tag.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DatabaseService {
   //Use a singleton pattern (to make sure only one instance of this object is present)
@@ -24,7 +28,17 @@ class DatabaseService {
   }
 
   Future<Database> initDB() async {
-    String path = join(await getDatabasesPath(), 'tagpad.db');
+    String path;
+    if (Platform.isWindows || Platform.isLinux) {
+      // Initialize FFI
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+      Directory documentsDirectory = await getApplicationDocumentsDirectory();
+      path = join(documentsDirectory.path, "tagpad.db");
+    } else {
+      path = join(await getDatabasesPath(), 'tagpad.db');
+      ;
+    }
     return await openDatabase(
       path,
       version: 1,
@@ -33,7 +47,6 @@ class DatabaseService {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    print("oncreate() called");
     await db.execute('''
       CREATE TABLE Note (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,7 +73,6 @@ class DatabaseService {
         FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE CASCADE
       )
     ''');
-    print("seeding data");
     await insertSeedData(db);
     print("data Seeded");
   }

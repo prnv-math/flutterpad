@@ -8,7 +8,7 @@ import 'UI/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await DatabaseService.instance.initDB();
+  await DatabaseService.instance.initDB();
   runApp(const TagPadApp());
 }
 
