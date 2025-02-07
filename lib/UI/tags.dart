@@ -13,13 +13,11 @@ class TagScreen extends StatefulWidget {
 }
 
 class _TagScreenState extends State<TagScreen> {
-  late final TextEditingController _tagNameEditController;
   late final TextEditingController _tagCreateController;
   Tag? editingTag;
 
   @override
   void initState() {
-    _tagNameEditController = TextEditingController();
     _tagCreateController = TextEditingController();
 
     super.initState();
@@ -39,29 +37,7 @@ class _TagScreenState extends State<TagScreen> {
                     fontWeight: FontWeight.w600,
                     fontSize: 16)),
           ),
-          actions: const [
-            // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
-            // const SizedBox(
-            //   width: 6,
-            // ),
-            // IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-            // const SizedBox(
-            //   width: 4,
-            // )
-
-            // Expanded(
-            //   child: SizedBox(
-            //     // width: double.maxFinite,
-            //     child: Center(
-            //       child: Text("Tags",
-            //           style: TextStyle(
-            //               color: Colors.black87,
-            //               fontWeight: FontWeight.w600,
-            //               fontSize: 16)),
-            //     ),
-            //   ),
-            // )
-          ],
+          actions: const [],
           leading: IconButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
@@ -143,112 +119,9 @@ class _TagScreenState extends State<TagScreen> {
               ),
               onChanged: (_) {},
             ),
-
-            // const SizedBox(
-            //   height: 12,
-            // ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: TextField(
-            //         enabled: editingTag != null,
-            //         textCapitalization: TextCapitalization.words,
-            //         controller: _tagNameEditController,
-            //         style: const TextStyle(
-            //           fontFamily: 'monospace',
-            //         ),
-            //         decoration: InputDecoration(
-            //           suffixIcon: Padding(
-            //             padding: const EdgeInsets.only(right: 6.0),
-            //             child: IconButton(
-            //               icon: const Icon(Icons.save),
-            //               color: editingTag == null
-            //                   ? Colors.black54
-            //                   : ColorDict.bgColor,
-            //               onPressed: () {},
-            //             ),
-            //           ),
-            //           label: Text(
-            //             editingTag == null
-            //                 ? "Edit below Tags"
-            //                 : "Edit \"${editingTag!.name}\"",
-            //             style: TextStyle(
-            //                 //
-            //                 // fontWeight: FontWeight.w500,
-            //                 color: Colors.black87
-            //                 //
-            //                 ),
-            //           ),
-            //           border: OutlineInputBorder(
-            //             borderSide:
-            //                 const BorderSide(color: ColorDict.noteCardborder),
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //           // focusColor: ColorDict.noteCardborder,
-            //           focusedBorder: OutlineInputBorder(
-            //             borderSide:
-            //                 const BorderSide(color: ColorDict.noteCardborder),
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //           enabledBorder: OutlineInputBorder(
-            //             borderSide:
-            //                 const BorderSide(color: ColorDict.noteCardborder),
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //         ),
-            //         onChanged: (_) {},
-            //       ),
-            //     ),
-            //     const SizedBox(
-            //       width: 6,
-            //     ),
-            //     IconButton(
-            //         onPressed: editingTag == null ? null : () {},
-            //         icon: Icon(
-            //           Icons.delete,
-            //           color: editingTag == null
-            //               ? Colors.black54
-            //               : ColorDict.bgColor,
-            //         )),
-            //     // const SizedBox(
-            //     //   width: 6,
-            //     // ),
-            //     // IconButton(
-            //     //     onPressed: editingTag == null ? null : () {},
-            //     //     icon: Icon(
-            //     //       Icons.close,
-            //     //       color: editingTag == null
-            //     //           ? Colors.black54
-            //     //           : ColorDict.bgColor,
-            //     //     ))
-            //   ],
-            // ),
             const SizedBox(
               height: 12,
             ),
-            // Row(
-            //   children: [
-            //     ElevatedButton(
-            //         onPressed: () {},
-            //         child: const Text(
-            //           "Search",
-            //           style: TextStyle(color: ColorDict.bgColor),
-            //         )),
-            //     const SizedBox(
-            //       width: 12,
-            //     ),
-            //     ElevatedButton(
-            //         // style: ButtonStyle(
-            //         //     backgroundColor: MaterialStatePropertyAll(
-            //         //         Colors.white.withOpacity(0.985))),
-            //         onPressed: () {},
-            //         child: const Text(
-            //           "Create",
-            //           style: TextStyle(color: ColorDict.bgColor),
-            //         )),
-            //   ],
-            // )
-
             Wrap(
               alignment: WrapAlignment.start,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -318,7 +191,7 @@ class _TagScreenState extends State<TagScreen> {
                     },
                     color: ColorDict.bgColor,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 6,
                   ),
                   // IconButton(

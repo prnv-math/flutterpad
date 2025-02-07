@@ -1,5 +1,6 @@
 // ignore: library_prefixes
-import 'dart:io' as IO;
+// import 'dart:ffi';
+import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterpad/UI/editor.dart';
@@ -27,9 +28,17 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    context.read<UserDataProvider>().fetchUserData();
     super.initState();
+
+    // _loadUserData();
   }
+
+  // void _loadUserData() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     await Provider.of<UserDataProvider>(context, listen: false)
+  //         .fetchUserData();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,34 +58,29 @@ class _HomeState extends State<Home> {
               visible: _selectionMode,
               child: Consumer<UserDataProvider>(
                   builder: (context, userDataProvider, child) {
-                if (userDataProvider.userData == null) {
-                  return const CircularProgressIndicator();
-                } else {
-                  return IconButton(
-                    icon: const Icon(Icons.select_all),
-                    onPressed: () {
-                      late final Set<int> displayedNoteIDs;
-                      if (filteredNotes.isNotEmpty) {
-                        displayedNoteIDs =
-                            filteredNotes.map((n) => n.id).toSet();
-                      } else {
-                        displayedNoteIDs = userDataProvider.userData!.notes
-                            .map((n) => n.id)
-                            .toSet();
-                      }
-                      if (_selectedNotes.containsAll(displayedNoteIDs)) {
-                        setState(() {
-                          _selectedNotes.clear();
-                        });
-                      } else {
+                return IconButton(
+                  icon: const Icon(Icons.select_all),
+                  onPressed: () {
+                    late final Set<int> displayedNoteIDs;
+                    if (filteredNotes.isNotEmpty) {
+                      displayedNoteIDs = filteredNotes.map((n) => n.id).toSet();
+                    } else {
+                      displayedNoteIDs = userDataProvider.userData.notes
+                          .map((n) => n.id)
+                          .toSet();
+                    }
+                    if (_selectedNotes.containsAll(displayedNoteIDs)) {
+                      setState(() {
                         _selectedNotes.clear();
-                        setState(() {
-                          _selectedNotes.addAll(displayedNoteIDs);
-                        });
-                      }
-                    },
-                  );
-                }
+                      });
+                    } else {
+                      _selectedNotes.clear();
+                      setState(() {
+                        _selectedNotes.addAll(displayedNoteIDs);
+                      });
+                    }
+                  },
+                );
               })),
           Visibility(
               visible: _selectionMode,
@@ -84,39 +88,46 @@ class _HomeState extends State<Home> {
                 icon: const Icon(Icons.delete),
                 onPressed: () {},
               )),
-          Consumer<UserDataProvider>(
-            builder: (context, userDataProvider, child) {
-              if (userDataProvider.userData == null) {
-                return const IconButton(
-                    onPressed: null, icon: Icon(Icons.search_rounded));
-              } else {
-                if (filteredNotes.isNotEmpty) {
-                  return IconButton(
-                      onPressed: () {
-                        setState(() {
-                          filteredNotes.clear();
-                        });
-                      },
-                      icon: const Icon(Icons.close));
-                } else {
-                  return IconButton(
-                      onPressed: () async {
-                        final res = await showSearch(
-                            context: context,
-                            delegate: TagPadSearchDelegate(
-                                userDataProvider.userData!.notes,
-                                userDataProvider.userData!.tags));
-                        if (res != null && res.isNotEmpty) {
-                          setState(() {
-                            filteredNotes = res;
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.search_rounded));
+          FutureBuilder(
+              future: Provider.of<UserDataProvider>(context, listen: false)
+                  .fetchUserData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
                 }
-              }
-            },
-          ),
+
+                if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+                return Consumer<UserDataProvider>(
+                  builder: (context, userDataProvider, child) {
+                    if (filteredNotes.isNotEmpty) {
+                      return IconButton(
+                          onPressed: () {
+                            setState(() {
+                              filteredNotes.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.close));
+                    } else {
+                      return IconButton(
+                          onPressed: () async {
+                            final res = await showSearch(
+                                context: context,
+                                delegate: TagPadSearchDelegate(
+                                    userDataProvider.userData.notes,
+                                    userDataProvider.userData.tags));
+                            if (res != null && res.isNotEmpty) {
+                              setState(() {
+                                filteredNotes = res;
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.search_rounded));
+                    }
+                  },
+                );
+              }),
           const SizedBox(
             width: 2,
           ),
@@ -134,79 +145,91 @@ class _HomeState extends State<Home> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           children: <Widget>[
-            Expanded(child: Consumer<UserDataProvider>(
-              builder: (context, userdataProvider, child) {
-                if (userdataProvider.userData == null) {
-                  return const CircularProgressIndicator();
-                } else {
-                  final displayedNotes = filteredNotes.isEmpty
-                      ? userdataProvider.userData!.notes
-                      : filteredNotes;
-                  return ListView.builder(
-                      itemCount: displayedNotes.length + 1,
-                      shrinkWrap: true,
-                      itemBuilder: (context, i) {
-                        // return Text('data#${i + 1}');
-                        if (i != 0) {
-                          return DecoratedBox(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: _selectedNotes.contains(userdataProvider
-                                        .userData!.notes[i - 1].id)
-                                    ? ColorDict.noteCardColor.withOpacity(0.7)
-                                    : Colors.transparent),
-                            // : ColorDict.noteCardColor.withOpacity(0.7)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 4),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (!_selectionMode) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                Editor(displayedNotes[i - 1])));
-                                  } else {
-                                    _toggleSelection(displayedNotes[i - 1].id);
-                                  }
-                                },
-                                onSecondaryTap: () {
-                                  if (!kIsWeb) {
-                                    if (IO.Platform.isWindows) {
+            FutureBuilder(
+                future: Provider.of<UserDataProvider>(context, listen: false)
+                    .fetchUserData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  }
+                  return Expanded(child: Consumer<UserDataProvider>(
+                    builder: (context, userdataProvider, child) {
+                      final displayedNotes = filteredNotes.isEmpty
+                          ? userdataProvider.userData.notes
+                          : filteredNotes;
+                      return ListView.builder(
+                          itemCount: displayedNotes.length + 1,
+                          shrinkWrap: true,
+                          itemBuilder: (context, i) {
+                            // return Text('data#${i + 1}');
+                            if (i != 0) {
+                              return DecoratedBox(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: _selectedNotes.contains(
+                                            userdataProvider
+                                                .userData.notes[i - 1].id)
+                                        ? ColorDict.noteCardColor
+                                            .withOpacity(0.7)
+                                        : Colors.transparent),
+                                // : ColorDict.noteCardColor.withOpacity(0.7)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 4),
+                                  child: GestureDetector(
+                                    onTap: () {
                                       if (!_selectionMode) {
-                                        setState(() {
-                                          _selectionMode = true;
-                                          _selectedNotes
-                                              .add(displayedNotes[i - 1].id);
-                                        });
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Editor(
+                                                    displayedNotes[i - 1])));
                                       } else {
                                         _toggleSelection(
                                             displayedNotes[i - 1].id);
                                       }
-                                    }
-                                  }
-                                },
-                                onLongPress: () {
-                                  setState(() {
-                                    _selectionMode = true;
-                                    _selectedNotes
-                                        .add(displayedNotes[i - 1].id);
-                                  });
-                                },
-                                child: NoteCard(note: displayedNotes[i - 1]),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return const SizedBox(
-                            height: 4,
-                          );
-                        }
-                      });
-                }
-              },
-            ))
+                                    },
+                                    onSecondaryTap: () {
+                                      if (!kIsWeb) {
+                                        if (io.Platform.isWindows) {
+                                          if (!_selectionMode) {
+                                            setState(() {
+                                              _selectionMode = true;
+                                              _selectedNotes.add(
+                                                  displayedNotes[i - 1].id);
+                                            });
+                                          } else {
+                                            _toggleSelection(
+                                                displayedNotes[i - 1].id);
+                                          }
+                                        }
+                                      }
+                                    },
+                                    onLongPress: () {
+                                      setState(() {
+                                        _selectionMode = true;
+                                        _selectedNotes
+                                            .add(displayedNotes[i - 1].id);
+                                      });
+                                    },
+                                    child:
+                                        NoteCard(note: displayedNotes[i - 1]),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox(
+                                height: 4,
+                              );
+                            }
+                          });
+                    },
+                  ));
+                })
           ],
         ),
       ),

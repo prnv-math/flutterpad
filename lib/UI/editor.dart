@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutterpad/UI/home.dart';
 import 'package:flutterpad/models/note.dart';
-import 'package:flutterpad/services/storageservice.dart';
+import 'package:flutterpad/services/userdataprovider.dart';
 import 'package:flutterpad/utils/dictionary.dart';
+import 'package:provider/provider.dart';
 
 class Editor extends StatefulWidget {
   final Note note;
@@ -59,7 +60,7 @@ class _EditorState extends State<Editor> {
               _debounceTimer!.cancel();
             }
             _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-              StorageService.updateTitleText(
+              context.read<UserDataProvider>().updateNoteTitle(
                   widget.note, _titleEditingController.text.trim());
             });
           },
@@ -177,7 +178,7 @@ class _EditorState extends State<Editor> {
                     _debounceTimer!.cancel();
                   }
                   _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-                    StorageService.updateNoteText(
+                    context.read<UserDataProvider>().updateNoteContent(
                         widget.note, _textEditingController.text.trim());
                   });
                 },

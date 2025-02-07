@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutterpad/services/databaseservice.dart';
 import 'package:flutterpad/services/userdataprovider.dart';
 import 'package:flutterpad/utils/dictionary.dart';
 import 'package:provider/provider.dart';
 
 import 'UI/home.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await DatabaseService.instance.initDB();
   runApp(const TagPadApp());
 }
 
