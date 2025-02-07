@@ -147,7 +147,7 @@ class _EditorState extends State<Editor> {
                 return tagBtns;
               }(),
             ),
-            SizedBox(
+            const SizedBox(
               height: 24,
             ),
             Expanded(

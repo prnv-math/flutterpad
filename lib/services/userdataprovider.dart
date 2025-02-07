@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutterpad/models/note.dart';
-import 'package:flutterpad/models/tag.dart';
 import 'package:flutterpad/models/userdata.dart';
 import 'package:flutterpad/services/databaseservice.dart';
 

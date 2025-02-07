@@ -8,6 +8,7 @@ import 'UI/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // var databaseFactory = (packageName: packageName);
   await DatabaseService.instance.initDB();
   runApp(const TagPadApp());
 }
@@ -28,7 +29,7 @@ class TagPadApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: const ColorScheme.highContrastLight(
-            background: ColorDict.noteCardColor,
+            surface: ColorDict.noteCardColor,
           ),
           // colorScheme: ColorScheme.fromSeed(seedColor: ColorDict.bgColor),
           useMaterial3: true,

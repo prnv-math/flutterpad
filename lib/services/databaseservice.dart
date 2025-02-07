@@ -37,7 +37,6 @@ class DatabaseService {
       path = join(documentsDirectory.path, "tagpad.db");
     } else {
       path = join(await getDatabasesPath(), 'tagpad.db');
-      ;
     }
     return await openDatabase(
       path,

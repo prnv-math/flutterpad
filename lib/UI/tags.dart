@@ -129,51 +129,47 @@ class _TagScreenState extends State<TagScreen> {
               // spacing: 4,
               children: () {
                 final List<Widget> tagBtns = [];
-                if (userData != null) {
-                  final tags = userData.tags;
-                  for (var tag in tags) {
-                    tagBtns.add(Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: editingTag == tag
-                            ? ColorDict.bgColor.withOpacity(0.7)
-                            : Colors.transparent,
-                      ),
-                      child: TextButton(
-                          onPressed: () {
-                            if (editingTag == tag) {
-                              setState(() {
-                                editingTag = null;
-                              });
-                            } else {
-                              setState(() {
-                                editingTag = tag;
-                              });
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(12, 40),
-                              backgroundColor: ColorDict.bgColor,
-                              shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                      color: ColorDict.noteCardborder),
-                                  borderRadius: BorderRadius.circular(16))),
-                          child: Text(
-                            tag.name,
-                            style: const TextStyle(
-                                color: ColorDict.noteCardColor, fontSize: 12),
-                          )),
-                    ));
-                  }
-                  return tagBtns;
-                  // return [Text("data")];
-                } else {
-                  return [const CircularProgressIndicator()];
+                final tags = userData.tags;
+                for (var tag in tags) {
+                  tagBtns.add(Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: editingTag == tag
+                          ? ColorDict.bgColor.withOpacity(0.7)
+                          : Colors.transparent,
+                    ),
+                    child: TextButton(
+                        onPressed: () {
+                          if (editingTag == tag) {
+                            setState(() {
+                              editingTag = null;
+                            });
+                          } else {
+                            setState(() {
+                              editingTag = tag;
+                            });
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(12, 40),
+                            backgroundColor: ColorDict.bgColor,
+                            shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: ColorDict.noteCardborder),
+                                borderRadius: BorderRadius.circular(16))),
+                        child: Text(
+                          tag.name,
+                          style: const TextStyle(
+                              color: ColorDict.noteCardColor, fontSize: 12),
+                        )),
+                  ));
                 }
+                return tagBtns;
+                // return [Text("data")];
               }(),
             ),
-            Expanded(
+            const Expanded(
                 child: SizedBox(
               width: 1,
             )),
