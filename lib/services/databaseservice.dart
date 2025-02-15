@@ -73,7 +73,7 @@ class DatabaseService {
       )
     ''');
     await insertSeedData(db);
-    print("data Seeded");
+    // print("data Seeded");
   }
 
   Future<void> insertSeedData(Database db) async {

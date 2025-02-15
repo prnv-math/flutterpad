@@ -136,7 +136,7 @@ class _TagScreenState extends State<TagScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: editingTag == tag
-                          ? ColorDict.bgColor.withOpacity(0.7)
+                          ? ColorDict.bgColor.withAlpha((0.7 * 255).toInt())
                           : Colors.transparent,
                     ),
                     child: TextButton(

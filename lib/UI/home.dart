@@ -29,16 +29,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
-    // _loadUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<UserDataProvider>(context, listen: false)
+          .fetchUserData();
+    });
   }
-
-  // void _loadUserData() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //     await Provider.of<UserDataProvider>(context, listen: false)
-  //         .fetchUserData();
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -88,46 +83,47 @@ class _HomeState extends State<Home> {
                 icon: const Icon(Icons.delete),
                 onPressed: () {},
               )),
-          FutureBuilder(
-              future: Provider.of<UserDataProvider>(context, listen: false)
-                  .fetchUserData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
+          // FutureBuilder(
+          //     future: Provider.of<UserDataProvider>(context, listen: false)
+          //         .fetchUserData(),
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState == ConnectionState.waiting) {
+          //         return const CircularProgressIndicator();
+          //       }
 
-                if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                }
-                return Consumer<UserDataProvider>(
-                  builder: (context, userDataProvider, child) {
-                    if (filteredNotes.isNotEmpty) {
-                      return IconButton(
-                          onPressed: () {
-                            setState(() {
-                              filteredNotes.clear();
-                            });
-                          },
-                          icon: const Icon(Icons.close));
-                    } else {
-                      return IconButton(
-                          onPressed: () async {
-                            final res = await showSearch(
-                                context: context,
-                                delegate: TagPadSearchDelegate(
-                                    userDataProvider.userData.notes,
-                                    userDataProvider.userData.tags));
-                            if (res != null && res.isNotEmpty) {
-                              setState(() {
-                                filteredNotes = res;
-                              });
-                            }
-                          },
-                          icon: const Icon(Icons.search_rounded));
-                    }
-                  },
-                );
-              }),
+          //       if (snapshot.hasError) {
+          //         return Text("Error: ${snapshot.error}");
+          //       }
+          // return
+          Consumer<UserDataProvider>(
+            builder: (context, userDataProvider, child) {
+              if (filteredNotes.isNotEmpty) {
+                return IconButton(
+                    onPressed: () {
+                      setState(() {
+                        filteredNotes.clear();
+                      });
+                    },
+                    icon: const Icon(Icons.close));
+              } else {
+                return IconButton(
+                    onPressed: () async {
+                      final res = await showSearch(
+                          context: context,
+                          delegate: TagPadSearchDelegate(
+                              userDataProvider.userData.notes,
+                              userDataProvider.userData.tags));
+                      if (res != null && res.isNotEmpty) {
+                        setState(() {
+                          filteredNotes = res;
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.search_rounded));
+              }
+            },
+          ),
+
           const SizedBox(
             width: 2,
           ),
@@ -145,91 +141,88 @@ class _HomeState extends State<Home> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           children: <Widget>[
-            FutureBuilder(
-                future: Provider.of<UserDataProvider>(context, listen: false)
-                    .fetchUserData(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  }
+            // FutureBuilder(
+            //     future: Provider.of<UserDataProvider>(context, listen: false)
+            //         .fetchUserData(),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.connectionState == ConnectionState.waiting) {
+            //         return const CircularProgressIndicator();
+            //       }
 
-                  if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  }
-                  return Expanded(child: Consumer<UserDataProvider>(
-                    builder: (context, userdataProvider, child) {
-                      final displayedNotes = filteredNotes.isEmpty
-                          ? userdataProvider.userData.notes
-                          : filteredNotes;
-                      return ListView.builder(
-                          itemCount: displayedNotes.length + 1,
-                          shrinkWrap: true,
-                          itemBuilder: (context, i) {
-                            // return Text('data#${i + 1}');
-                            if (i != 0) {
-                              return DecoratedBox(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    color: _selectedNotes.contains(
-                                            userdataProvider
-                                                .userData.notes[i - 1].id)
-                                        ? ColorDict.noteCardColor
-                                            .withOpacity(0.7)
-                                        : Colors.transparent),
-                                // : ColorDict.noteCardColor.withOpacity(0.7)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 4),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      if (!_selectionMode) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Editor(
-                                                    displayedNotes[i - 1])));
-                                      } else {
-                                        _toggleSelection(
-                                            displayedNotes[i - 1].id);
-                                      }
-                                    },
-                                    onSecondaryTap: () {
-                                      if (!kIsWeb) {
-                                        if (io.Platform.isWindows) {
-                                          if (!_selectionMode) {
-                                            setState(() {
-                                              _selectionMode = true;
-                                              _selectedNotes.add(
-                                                  displayedNotes[i - 1].id);
-                                            });
-                                          } else {
-                                            _toggleSelection(
-                                                displayedNotes[i - 1].id);
-                                          }
-                                        }
-                                      }
-                                    },
-                                    onLongPress: () {
+            //       if (snapshot.hasError) {
+            //         return Text("Error: ${snapshot.error}");
+            //       }
+            //       return
+            Expanded(child: Consumer<UserDataProvider>(
+              builder: (context, userdataProvider, child) {
+                final displayedNotes = filteredNotes.isEmpty
+                    ? userdataProvider.userData.notes
+                    : filteredNotes;
+                return ListView.builder(
+                    itemCount: displayedNotes.length + 1,
+                    shrinkWrap: true,
+                    itemBuilder: (context, i) {
+                      // return Text('data#${i + 1}');
+                      if (i != 0) {
+                        return DecoratedBox(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: _selectedNotes.contains(
+                                      userdataProvider.userData.notes[i - 1].id)
+                                  ? ColorDict.noteCardColor
+                                      .withAlpha((0.7 * 255).toInt())
+                                  : Colors.transparent),
+                          // : ColorDict.noteCardColor.withOpacity(0.7)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 4),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (!_selectionMode) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              Editor(displayedNotes[i - 1])));
+                                } else {
+                                  _toggleSelection(displayedNotes[i - 1].id);
+                                }
+                              },
+                              onSecondaryTap: () {
+                                if (!kIsWeb) {
+                                  if (io.Platform.isWindows) {
+                                    if (!_selectionMode) {
                                       setState(() {
                                         _selectionMode = true;
                                         _selectedNotes
                                             .add(displayedNotes[i - 1].id);
                                       });
-                                    },
-                                    child:
-                                        NoteCard(note: displayedNotes[i - 1]),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return const SizedBox(
-                                height: 4,
-                              );
-                            }
-                          });
-                    },
-                  ));
-                })
+                                    } else {
+                                      _toggleSelection(
+                                          displayedNotes[i - 1].id);
+                                    }
+                                  }
+                                }
+                              },
+                              onLongPress: () {
+                                setState(() {
+                                  _selectionMode = true;
+                                  _selectedNotes.add(displayedNotes[i - 1].id);
+                                });
+                              },
+                              child: NoteCard(note: displayedNotes[i - 1]),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox(
+                          height: 4,
+                        );
+                      }
+                    });
+              },
+            ))
+            // })
           ],
         ),
       ),
@@ -247,7 +240,7 @@ class _HomeState extends State<Home> {
               )),
             ),
             Divider(
-              color: ColorDict.noteCardborder.withOpacity(0.8),
+              color: ColorDict.noteCardborder.withAlpha((0.8 * 255).toInt()),
             ),
             ListTile(
               leading: const Icon(

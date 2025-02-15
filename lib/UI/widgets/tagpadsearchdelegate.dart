@@ -212,7 +212,8 @@ class TagPadSearchDelegate extends SearchDelegate {
               ),
               title: Text(
                 noteName,
-                style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                style: TextStyle(
+                    color: Colors.black.withAlpha((0.6 * 255).toInt())),
               ),
               onTap: () {
                 filterCriteria.clear();
