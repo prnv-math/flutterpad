@@ -29,10 +29,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<UserDataProvider>(context, listen: false)
-          .fetchUserData();
-    });
   }
 
   @override
@@ -53,29 +49,36 @@ class _HomeState extends State<Home> {
               visible: _selectionMode,
               child: Consumer<UserDataProvider>(
                   builder: (context, userDataProvider, child) {
-                return IconButton(
-                  icon: const Icon(Icons.select_all),
-                  onPressed: () {
-                    late final Set<int> displayedNoteIDs;
-                    if (filteredNotes.isNotEmpty) {
-                      displayedNoteIDs = filteredNotes.map((n) => n.id).toSet();
-                    } else {
-                      displayedNoteIDs = userDataProvider.userData.notes
-                          .map((n) => n.id)
-                          .toSet();
-                    }
-                    if (_selectedNotes.containsAll(displayedNoteIDs)) {
-                      setState(() {
+                if (userDataProvider.userData.notes.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return IconButton(
+                    icon: const Icon(Icons.select_all),
+                    onPressed: () {
+                      late final Set<int> displayedNoteIDs;
+                      if (filteredNotes.isNotEmpty) {
+                        displayedNoteIDs =
+                            filteredNotes.map((n) => n.id).toSet();
+                      } else {
+                        displayedNoteIDs = userDataProvider.userData.notes
+                            .map((n) => n.id)
+                            .toSet();
+                      }
+                      if (_selectedNotes.containsAll(displayedNoteIDs)) {
+                        setState(() {
+                          _selectedNotes.clear();
+                        });
+                      } else {
                         _selectedNotes.clear();
-                      });
-                    } else {
-                      _selectedNotes.clear();
-                      setState(() {
-                        _selectedNotes.addAll(displayedNoteIDs);
-                      });
-                    }
-                  },
-                );
+                        setState(() {
+                          _selectedNotes.addAll(displayedNoteIDs);
+                        });
+                      }
+                    },
+                  );
+                }
               })),
           Visibility(
               visible: _selectionMode,

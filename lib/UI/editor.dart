@@ -60,8 +60,11 @@ class _EditorState extends State<Editor> {
               _debounceTimer!.cancel();
             }
             _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-              context.read<UserDataProvider>().updateNoteTitle(
-                  widget.note, _titleEditingController.text.trim());
+              Note updatedNote = widget.note;
+              updatedNote.title = _titleEditingController.text.trim();
+              context
+                  .read<UserDataProvider>()
+                  .updateNote(widget.note.id, updatedNote);
             });
           },
         ),
@@ -178,8 +181,11 @@ class _EditorState extends State<Editor> {
                     _debounceTimer!.cancel();
                   }
                   _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-                    context.read<UserDataProvider>().updateNoteContent(
-                        widget.note, _textEditingController.text.trim());
+                    Note updatedNote = widget.note;
+                    updatedNote.content = _textEditingController.text.trim();
+                    context
+                        .read<UserDataProvider>()
+                        .updateNote(widget.note.id, updatedNote);
                   });
                 },
               ),

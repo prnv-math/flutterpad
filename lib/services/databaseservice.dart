@@ -149,6 +149,16 @@ class DatabaseService {
     );
   }
 
+  Future<void> updateTag(int id, String name) async {
+    final db = await instance.database;
+    await db.update(
+      'tags',
+      {'name': name},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   // **CRUD for NoteTag (Associating Notes and Tags)**
   Future<void> addTagToNote(int noteId, int tagId) async {
     final db = await database;

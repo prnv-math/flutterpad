@@ -9,9 +9,14 @@ class Note {
   String content = "";
   // "Remember that Flutter's layout system is different from traditional HTML layouts, so you might need to adapt your approach to achieve the desired results.";
 
-  Note({required this.id, required this.title, this.content = ""}) {
-    dateCreated = DateTime.now();
-    dateModified = DateTime.now();
+  Note(
+      {required this.id,
+      required this.title,
+      this.content = "",
+      DateTime? dateCreatedAt,
+      DateTime? dateModifiedLast}) {
+    dateCreated = dateCreatedAt ?? DateTime.now();
+    dateModified = dateModifiedLast ?? DateTime.now();
   }
 
   //Tag management for note
@@ -34,8 +39,8 @@ class Note {
       'id': id,
       'title': title,
       'content': content,
-      'date_created': dateCreated,
-      'date_modified': dateModified
+      'date_created': dateCreated.toIso8601String().split('T').first,
+      'date_modified': dateModified.toIso8601String().split('T').first
     };
   }
 
@@ -44,6 +49,13 @@ class Note {
       id: map['id'],
       title: map['title'],
       content: map['content'],
+      //null-check instead of migrating to new schema to set these to not-nullable (for now)
+      dateCreatedAt: map['date_created'] != null
+          ? DateTime.parse(map['date_created'])
+          : DateTime.now(),
+      dateModifiedLast: map['date_modified'] != null
+          ? DateTime.parse(map['date_modified'])
+          : DateTime.now(),
     );
   }
 }
