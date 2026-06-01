@@ -82,7 +82,7 @@ class _EditorState extends State<Editor> {
           Container(
               margin: const EdgeInsets.only(right: 2),
               child: PopupMenuButton(
-                  // color: Colors.white,
+                  color: Colors.white.withAlpha((0.8 * 255).toInt()),
                   offset: const Offset(0, 12),
                   position: PopupMenuPosition.under,
                   onCanceled: () {
@@ -131,7 +131,11 @@ class _EditorState extends State<Editor> {
               spacing: 6,
               children: () {
                 final List<TextButton> tagBtns = [];
-                for (var tag in widget.note.getTags()) {
+                final alltags =
+                    Provider.of<UserDataProvider>(context, listen: false)
+                        .userData
+                        .tags;
+                for (var tag in widget.note.getTags(alltags)) {
                   tagBtns.add(TextButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(

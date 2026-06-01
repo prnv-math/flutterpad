@@ -58,7 +58,7 @@ class TagPadSearchDelegate extends SearchDelegate {
     List<Note> matchedNotes = allNotes.where((note) {
       bool matchesCriteria = filterCriteria.isEmpty ||
           filterCriteria.any((criteria) =>
-              note.getTags().any((tag) => tag.name.contains(criteria)));
+              note.getTags(allTags).any((tag) => tag.name.contains(criteria)));
 
       bool matchesQuery =
           note.title.contains(query) || note.content.contains(query);
@@ -77,8 +77,8 @@ class TagPadSearchDelegate extends SearchDelegate {
     final List<String> noteSuggestions = allNotes
         .where((note) =>
             note.title.toLowerCase().contains(query.toLowerCase()) &&
-            filterCriteria.every(
-                (c) => note.getTags().map((t) => t.name).toList().contains(c)))
+            filterCriteria.every((c) =>
+                note.getTags(allTags).map((t) => t.name).toList().contains(c)))
         .map((note) => note.title)
         .toList();
     final List<String> tagSuggestions = allTags
@@ -89,8 +89,11 @@ class TagPadSearchDelegate extends SearchDelegate {
         .where((n) =>
             n.title.toLowerCase().contains(query.toLowerCase()) &&
             (filterCriteria.length == 1 ||
-                filterCriteria.any((c) =>
-                    n.getTags().map((t) => t.name).toList().contains(c))))
+                filterCriteria.any((c) => n
+                    .getTags(allTags)
+                    .map((t) => t.name)
+                    .toList()
+                    .contains(c))))
         .map((n) => n.title)
         .where((title) => !noteSuggestions.contains(title))
         .toList();

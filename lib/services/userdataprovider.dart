@@ -85,6 +85,7 @@ class UserDataProvider extends ChangeNotifier {
     Tag updatedTag = _userData.tags.elementAt(idx);
     updatedTag.name = tagName;
     _userData.tags[idx] = updatedTag;
+    notifyListeners();
   }
 
   Future<void> deleteTag(int tagId) async {
@@ -92,6 +93,7 @@ class UserDataProvider extends ChangeNotifier {
     _userData.tags.remove(_userData.tags.where((t) {
       return t.id == tagId;
     }).first);
+    notifyListeners();
   }
 
   @override

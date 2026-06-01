@@ -98,18 +98,24 @@ class DatabaseService {
 
   // CRUD code
   Future<int> createNote(Note note) async {
-    final db = await database;
+    final db = await instance.database;
     return await db.insert('Note', note.toMap());
   }
 
   Future<List<Note>> getAllNotes() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('Note');
-    return maps.map((e) => Note.fromMap(e)).toList();
+    final db = await instance.database;
+    final List<Map<String, dynamic>> noteMaps = await db.query('Note');
+
+    final List<Note> notes = [];
+    for (var noteMap in noteMaps) {
+      final List<int> tagIDs = await getTagIDsForNote(noteMap['id']);
+      notes.add(Note.fromMap(noteMap, tagIDs));
+    }
+    return notes;
   }
 
   Future<int> updateNote(Note note) async {
-    final db = await database;
+    final db = await instance.database;
     return await db.update(
       'Note',
       note.toMap(),
@@ -119,7 +125,7 @@ class DatabaseService {
   }
 
   Future<int> deleteNote(int id) async {
-    final db = await database;
+    final db = await instance.database;
     return await db.delete(
       'Note',
       where: 'id = ?',
@@ -129,19 +135,19 @@ class DatabaseService {
 
   // **CRUD for Tags**
   Future<int> createTag(Tag tag) async {
-    final db = await database;
+    final db = await instance.database;
     return await db.insert('Tag', tag.toMap(),
         conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
   Future<List<Tag>> getAllTags() async {
-    final db = await database;
+    final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query('Tag');
     return maps.map((e) => Tag.fromMap(e)).toList();
   }
 
   Future<int> deleteTag(int id) async {
-    final db = await database;
+    final db = await instance.database;
     return await db.delete(
       'Tag',
       where: 'id = ?',
@@ -152,7 +158,7 @@ class DatabaseService {
   Future<void> updateTag(int id, String name) async {
     final db = await instance.database;
     await db.update(
-      'tags',
+      'Tag',
       {'name': name},
       where: 'id = ?',
       whereArgs: [id],
@@ -161,23 +167,24 @@ class DatabaseService {
 
   // **CRUD for NoteTag (Associating Notes and Tags)**
   Future<void> addTagToNote(int noteId, int tagId) async {
-    final db = await database;
+    final db = await instance.database;
     await db.insert('NoteTagRecords', {'note_id': noteId, 'tag_id': tagId});
   }
 
-  Future<List<Tag>> getTagsForNote(int noteId) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT Tag.* FROM Tag
-      JOIN NoteTagRecords ON Tag.id = NoteTagRecords.tag_id
-      WHERE NoteTagRecords.note_id = ?
-    ''', [noteId]);
-
-    return maps.map((e) => Tag.fromMap(e)).toList();
+  Future<List<int>> getTagIDsForNote(int noteId) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'NoteTagRecords',
+      columns: ['tag_id'],
+      where: 'note_id = ?',
+      whereArgs: [noteId],
+    );
+    // return List<int>.from(maps.map((map) => map['tagId']));
+    return List<int>.from(maps.map((map) => map['tag_id']));
   }
 
   Future<void> removeTagFromNote(int noteId, int tagId) async {
-    final db = await database;
+    final db = await instance.database;
     await db.delete(
       'NoteTagRecords',
       where: 'note_id = ? AND tag_id = ?',

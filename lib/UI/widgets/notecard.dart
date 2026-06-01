@@ -2,7 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutterpad/models/note.dart';
+import 'package:flutterpad/models/userdata.dart';
+import 'package:flutterpad/services/userdataprovider.dart';
 import 'package:flutterpad/utils/dictionary.dart';
+import 'package:provider/provider.dart';
 
 class NoteCard extends StatefulWidget {
   final Note note;
@@ -104,7 +107,12 @@ class _NoteCardState extends State<NoteCard> {
                             spacing: 6,
                             children: () {
                               final List<TextButton> tagBtns = [];
-                              for (var tag in widget.note.getTags()) {
+                              final alltags = Provider.of<UserDataProvider>(
+                                      context,
+                                      listen: false)
+                                  .userData
+                                  .tags;
+                              for (var tag in widget.note.getTags(alltags)) {
                                 tagBtns.add(TextButton(
                                     onPressed: () {},
                                     style: ElevatedButton.styleFrom(

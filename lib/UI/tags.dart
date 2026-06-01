@@ -72,7 +72,12 @@ class _TagScreenState extends State<TagScreen> {
                         padding: const EdgeInsets.only(right: 6.0),
                         child: IconButton(
                           icon: const Icon(Icons.save),
-                          onPressed: () {},
+                          onPressed: () {
+                            Provider.of<UserDataProvider>(context,
+                                    listen: false)
+                                .updateTag(editingTag!.id,
+                                    _tagCreateController.text.trim());
+                          },
                           color: ColorDict.bgColor,
                         ),
                       )
