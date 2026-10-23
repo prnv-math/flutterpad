@@ -1,3 +1,5 @@
+// NO WEB FOR NOW BECAUSE SQFLITE IS UNSUPPORTED ON WEB
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';

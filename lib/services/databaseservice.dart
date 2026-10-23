@@ -179,7 +179,6 @@ class DatabaseService {
       where: 'note_id = ?',
       whereArgs: [noteId],
     );
-    // return List<int>.from(maps.map((map) => map['tagId']));
     return List<int>.from(maps.map((map) => map['tag_id']));
   }
 

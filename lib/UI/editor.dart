@@ -82,7 +82,8 @@ class _EditorState extends State<Editor> {
           Container(
               margin: const EdgeInsets.only(right: 2),
               child: PopupMenuButton(
-                  color: Colors.white.withAlpha((0.8 * 255).toInt()),
+                  // color: Colors.white.withAlpha((0.8 * 255).toInt()),
+                  color: Colors.white,
                   offset: const Offset(0, 12),
                   position: PopupMenuPosition.under,
                   onCanceled: () {

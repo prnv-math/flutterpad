@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutterpad/models/note.dart';
-import 'package:flutterpad/models/userdata.dart';
 import 'package:flutterpad/services/userdataprovider.dart';
 import 'package:flutterpad/utils/dictionary.dart';
 import 'package:provider/provider.dart';

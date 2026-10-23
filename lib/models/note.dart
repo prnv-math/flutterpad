@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutterpad/models/tag.dart';
 
 class Note {
